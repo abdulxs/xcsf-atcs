@@ -10,6 +10,7 @@ import sys
 import time
 import os.path
 import plot_stats
+from datetime import datetime
 
 try:
     import cPickle as pickle
@@ -27,17 +28,27 @@ DEFAULT_VALIDATION_INTERVAL = 100
 DEFAULT_PRINT_LOG = False
 DEFAULT_PLOT_GRAPHS = False
 DEFAULT_NO_HIDDEN_NODES = 12
-DEFAULT_TODAY = datetime.datetime.today()
+DEFAULT_TODAY = datetime.today()
 
 
 def recency_weighted_avg(values, alpha):
     return sum(np.power(alpha, range(0, len(values))) * values) / len(values)
 
 
+##thinking about adding inside below
+
+    # date_format = '%d.%m.%Y %H:%M'
+    # max_Exec_time = datetime.strptime(scenario_metadata['maxExecTime'], date_format)
+    # Last_Run = datetime.strptime(state['LastRun'], date_format)
+
 def preprocess_xcs(state, scenario_metadata, histlen):
-    if scenario_metadata['maxExecTime'] > scenario_metadata['minExecTime']:
-        time_since = (scenario_metadata['maxExecTime'] - state['LastRun']).total_seconds() / (
-            scenario_metadata['maxExecTime'] - scenario_metadata['minExecTime']).total_seconds()
+    maxExecTime = datetime.strptime(scenario_metadata['maxExecTime'], "%d.%m.%Y %H:%M")
+    minExecTime = datetime.strptime(scenario_metadata['minExecTime'], "%d.%m.%Y %H:%M")
+    LastRun = datetime.strptime(state['LastRun'], "%d.%m.%Y %H:%M")
+
+
+    if maxExecTime > minExecTime:
+        time_since = (maxExecTime - LastRun) / (maxExecTime - minExecTime)
     else:
         time_since = 0
 
@@ -97,9 +108,12 @@ def preprocess_xcs_discrete(state, scenario_metadata, histlen):
     return situation
 
 def preprocess_continuous(state, scenario_metadata, histlen):
-    if scenario_metadata['maxExecTime'] > scenario_metadata['minExecTime']:
-        time_since = (scenario_metadata['maxExecTime'] - state['LastRun']).total_seconds() / (
-            scenario_metadata['maxExecTime'] - scenario_metadata['minExecTime']).total_seconds()
+    maxExecTime = datetime.strptime(scenario_metadata['maxExecTime'], "%d.%m.%Y %H:%M")
+    minExecTime = datetime.strptime(scenario_metadata['minExecTime'], "%d.%m.%Y %H:%M")
+    LastRun = datetime.strptime(state['LastRun'], "%d.%m.%Y %H:%M")
+    
+    if maxExecTime > minExecTime:
+        time_since = (maxExecTime - LastRun) / (maxExecTime - minExecTime)
     else:
         time_since = 0
 
@@ -118,6 +132,7 @@ def preprocess_continuous(state, scenario_metadata, histlen):
 
 
 def preprocess_discrete(state, scenario_metadata, histlen):
+    
     if scenario_metadata['maxDuration'] > scenario_metadata['minDuration']:
         duration = (scenario_metadata['maxDuration'] - state['Duration']) / (
             scenario_metadata['maxDuration'] - scenario_metadata['minDuration'])

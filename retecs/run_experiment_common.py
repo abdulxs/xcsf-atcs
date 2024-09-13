@@ -134,7 +134,7 @@ def run_experiments(exp_fun, parallel=PARALLEL):
 def exp_run_industrial_datasets(iteration, datasets=['paintcontrol', 'iofrol', 'gsdtsr']):
     ags = [
         lambda: (XCSF(2000, [0, 1], 6), retecs.preprocess_xcs, reward.tcfail),
-        lambda: (XCS(2000, list(range(0, 45)), 6), retecs.preprocess_xcs, reward.tcfail)#,
+        lambda: (XCS(2000, list(range(0, 45)), 6), retecs.preprocess_xcs, reward.tcfail),
         lambda: (agents.NetworkAgent(histlen=retecs.DEFAULT_HISTORY_LENGTH, state_size=retecs.DEFAULT_STATE_SIZE,
                                      action_size=1,
                                      hidden_size=retecs.DEFAULT_NO_HIDDEN_NODES), retecs.preprocess_continuous,
